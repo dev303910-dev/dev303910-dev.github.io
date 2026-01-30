@@ -302,7 +302,7 @@
             document.getElementById('txt-upload-label').innerText = translations[lang].upload;
             document.getElementById('verify-btn').innerText = translations[lang].btn_verify;
             document.getElementById('btn-back-step').innerText = translations[lang].btn_back;
-            document.getElementById('txt-save-qr').innerText = translations[lang].btn_save_qr; // แปลภาษาปุ่ม Save
+            document.getElementById('txt-save-qr').innerText = translations[lang].btn_save_qr;
             
             if(currentAmount > 0) {
                 document.getElementById('target-txt').innerText = translations[lang].target.replace('{n}', currentAmount.toFixed(2));
@@ -337,13 +337,13 @@
                 document.getElementById('qr-block').style.display = 'block';
                 document.getElementById('loader').classList.remove('hidden');
                 qrImg.classList.add('hidden');
-                saveBtn.classList.add('hidden'); // ซ่อนปุ่มก่อนโหลดเสร็จ
+                saveBtn.classList.add('hidden');
 
                 qrImg.src = qrUrl;
                 qrImg.onload = () => {
                     document.getElementById('loader').classList.add('hidden');
                     qrImg.classList.remove('hidden');
-                    saveBtn.classList.remove('hidden'); // แสดงปุ่มเมื่อรูปมา
+                    saveBtn.classList.remove('hidden');
                     qrImg.classList.add('animate__animated', 'animate__fadeIn');
                     startTimer(300);
                 };
@@ -354,7 +354,8 @@
             const qrImg = document.getElementById('qr-display');
             if(qrImg.src) {
                 try {
-                    const response = await fetch(qrImg.src);
+                    // **แก้ไข**: ใช้ AllOrigins Proxy เพื่อเลี่ยง CORS ให้สามารถโหลดภาพมาบันทึกได้
+                    const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(qrImg.src)}`);
                     const blob = await response.blob();
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
@@ -366,7 +367,7 @@
                     window.URL.revokeObjectURL(url);
                 } catch (e) {
                     console.error('Download failed', e);
-                    // Fallback ถ้า fetch ไม่ได้ ให้เปิดหน้าต่างใหม่
+                    // Fallback ถ้ายังไม่ได้อีก ให้เปิด Tab ใหม่
                     window.open(qrImg.src, '_blank');
                 }
             }
@@ -389,7 +390,7 @@
                 document.getElementById('preview').style.display = 'none';
                 document.getElementById('upload-placeholder').style.display = 'block';
                 document.getElementById('slip-input').value = "";
-                document.getElementById('btn-save-qr').classList.add('hidden'); // ซ่อนปุ่มเมื่อ reset
+                document.getElementById('btn-save-qr').classList.add('hidden');
             }, 500);
         }
 
